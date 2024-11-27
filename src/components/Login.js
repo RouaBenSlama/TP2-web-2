@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth, googleProvider, facebookProvider } from '../firebase';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, linkWithCredential, FacebookAuthProvider } from 'firebase/auth';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendEmailVerification, linkWithCredential, FacebookAuthProvider } from 'firebase/auth';
 import '../styles/Login.css';
 
 function Login() {
@@ -80,6 +80,15 @@ function Login() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((result) => {
         console.log('Compte créé avec un email:', result.user);
+  
+        sendEmailVerification(result.user)
+          .then(() => {
+            alert('Un courriel de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.');
+          })
+          .catch((error) => {
+            setError("Erreur lors de l'envoi du courriel de confirmation : " + error.message);
+          });
+  
         const userData = {
           email: result.user.email,
           displayName: result.user.displayName || result.user.email,
