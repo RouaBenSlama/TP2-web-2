@@ -22,7 +22,7 @@ function ArticleChat({ articleId }) {
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, 'articles', articleId, 'messages'), orderBy('createdAt'));
+    const q = query(collection(db, 'tasks', articleId, 'messages'), orderBy('createdAt'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newMessages = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -37,7 +37,7 @@ function ArticleChat({ articleId }) {
     const markAsRead = async () => {
       if (!currentUser || !currentUser.email) return;
 
-      const readRef = collection(db, 'articles', articleId, 'employeesRead');
+      const readRef = collection(db, 'tasks', articleId, 'employeesRead');
       const employeeExists = employeesRead.has(currentUser.email);
 
       if (!employeeExists) {
@@ -50,7 +50,7 @@ function ArticleChat({ articleId }) {
   }, [articleId, currentUser, employeesRead]);
 
   useEffect(() => {
-    const q = query(collection(db, 'articles', articleId, 'employeesRead'), orderBy('readAt'));
+    const q = query(collection(db, 'tasks', articleId, 'employeesRead'), orderBy('readAt'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const uniqueEmployees = new Set(snapshot.docs.map((doc) => doc.data().name));
       setEmployeesRead(uniqueEmployees);
@@ -62,7 +62,7 @@ function ArticleChat({ articleId }) {
     e.preventDefault();
     if (!newMessage || !currentUser) return;
 
-    await addDoc(collection(db, 'articles', articleId, 'messages'), {
+    await addDoc(collection(db, 'tasks', articleId, 'messages'), {
       text: newMessage,
       createdAt: new Date(),
       employeeName: currentUser.displayName || currentUser.email,
@@ -78,10 +78,10 @@ function ArticleChat({ articleId }) {
   return (
     <div className="chat">
       <div className="chat-header">
-        <h2>Discussion sur cet article</h2>
+        <h2>Discussion sur cette tâche</h2>
         <div className="dropdown-container">
           <button className="dropdown-btn" onClick={toggleDropdown}>
-            Employés ayant lu cet article ▼
+            Personnes ayant lu cette tâche ▼
           </button>
           {isDropdownOpen && (
             <div className="dropdown-content">

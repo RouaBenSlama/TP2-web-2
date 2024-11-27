@@ -21,12 +21,10 @@ header h1 {
   font-size: 24px;
 }
 
-header button {
-  background-color: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: color 0.3s ease;
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
 }
 
 header button:hover {

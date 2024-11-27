@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebase';
 import { addDoc, collection, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
+import { auth } from '../firebase';
 import '../styles/CreateArticle.css';
 
 function CreateArticle({ selectedArticle, setSelectedArticle }) {
@@ -8,16 +9,30 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const [theme, setTheme] = useState('');
+  const [priority, setPriority] = useState('moyenne');
+  const [comments, setComments] = useState('');
+  const [commentTracking, setCommentTracking] = useState('');
+  const [responsible, setResponsible] = useState('admin');
+
+  const currentUser = auth.currentUser;
 
   useEffect(() => {
     if (selectedArticle) {
       setTitle(selectedArticle.title);
       setDescription(selectedArticle.description);
       setTheme(selectedArticle.theme);
+      setPriority(selectedArticle.priority);
+      setComments(selectedArticle.comments);
+      setCommentTracking(selectedArticle.commentTracking);
+      setResponsible(selectedArticle.responsible);
     } else {
       setTitle('');
       setDescription('');
       setTheme('');
+      setPriority('moyenne');
+      setComments('');
+      setCommentTracking('');
+      setResponsible('admin');
     }
   }, [selectedArticle]);
 
@@ -34,41 +49,80 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const imageUrl = await handleImageUpload();
+
+    const taskData = {
+      title,
+      description,
+      imageUrl,
+      theme,
+      priority,
+      comments,
+      commentTracking,
+      responsible,
+      createdAt: serverTimestamp(),
+      submittedBy: currentUser ? currentUser.displayName : 'Unknown User',
+      dateSubmitted: serverTimestamp(),
+    };
+
     if (selectedArticle) {
-      const imageUrl = await handleImageUpload();
-      await updateDoc(doc(db, 'articles', selectedArticle.id), {
-        title,
-        description,
-        imageUrl,
-        theme,
-        updatedAt: serverTimestamp(),
-      });
+      await updateDoc(doc(db, 'tasks', selectedArticle.id), taskData);
     } else {
-      const imageUrl = await handleImageUpload();
-      await addDoc(collection(db, 'articles'), {
-        title,
-        description,
-        imageUrl,
-        theme,
-        createdAt: serverTimestamp(),
-      });
+      await addDoc(collection(db, 'tasks'), taskData);
     }
 
     setTitle('');
     setDescription('');
     setImage(null);
     setTheme('');
+    setPriority('moyenne');
+    setComments('');
+    setCommentTracking('');
+    setResponsible('admin');
     setSelectedArticle(null);
   };
 
   return (
     <div className="create-article-container">
       <form onSubmit={handleSubmit}>
-        <h3>{selectedArticle ? 'Modifier l\'article' : 'Créer un nouvel article'}</h3>
-        <input type="text" placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
+        <h3>{selectedArticle ? 'Modifier la tâche' : 'Créer une nouvelle tâche'}</h3>
+        <input
+          type="text"
+          placeholder="Titre de la tâche"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Description détaillée"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
         <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-        <input type="text" placeholder="Thème" value={theme} onChange={(e) => setTheme(e.target.value)} required />
+        <input
+          type="text"
+          placeholder="Thème"
+          value={theme}
+          onChange={(e) => setTheme(e.target.value)}
+          required
+        />
+        <select value={priority} onChange={(e) => setPriority(e.target.value)} required>
+          <option value="faible">Faible</option>
+          <option value="moyenne">Moyenne</option>
+          <option value="élevée">Élevée</option>
+        </select>
+        <textarea
+          placeholder="Commentaires"
+          value={comments}
+          onChange={(e) => setComments(e.target.value)}
+        />
+        <textarea
+          placeholder="Suivi des commentaires (visible une fois assigné)"
+          value={commentTracking}
+          onChange={(e) => setCommentTracking(e.target.value)}
+          disabled={responsible !== 'admin'}
+        />
         <button type="submit">{selectedArticle ? 'Modifier' : 'Créer'}</button>
       </form>
     </div>

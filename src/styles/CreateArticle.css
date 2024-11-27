@@ -11,6 +11,7 @@
   text-align: center;
 }
 
+.create-article-container select,
 .create-article-container input,
 .create-article-container textarea {
   width: 100%;
@@ -21,6 +22,7 @@
   transition: border-color 0.3s ease;
 }
 
+.create-article-container select:focus,
 .create-article-container input:focus,
 .create-article-container textarea:focus {
   border-color: #0056b3;
