@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
+import { auth } from '../firebase';
 import { collection, onSnapshot, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import '../styles/ThemeList.css';
 import { FaCheckCircle, FaCircle, FaSpinner, FaPauseCircle } from 'react-icons/fa';
+import emailjs from 'emailjs-com';
 
 
 const statusIcons = {
@@ -68,9 +70,39 @@ function ThemeList({ setSelectedArticleId, setSelectedArticle }) {
     try {
       const articleRef = doc(db, 'tasks', articleId);
       await updateDoc(articleRef, { status: nextStatus });
+  
       alert(`Statut mis à jour vers : ${nextStatus}`);
+  
+      // Get the current user's email
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.error('No user is currently signed in.');
+        return;
+      }
+  
+      const userEmail = currentUser.email;
+  
+      // Send email using EmailJS
+      emailjs
+        .send(
+          'service_8n05oit',
+          'template_iu7gegw', // Replace with your EmailJS template ID
+          {
+            to_email: userEmail, // Use the current user's email
+            task_status: nextStatus,
+          },
+          'JurOjVRsPBl1RIKyH' // Replace with your EmailJS user ID
+        )
+        .then(
+          () => {
+            alert(`Statut mis à jour vers : ${nextStatus} et email envoyé.`);
+          },
+          (error) => {
+            console.error("Erreur lors de l'envoi de l'email :", error);
+          }
+        );
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du statut", error);
+      console.error("Erreur lors de la mise à jour du statut :", error);
     }
   };
   
