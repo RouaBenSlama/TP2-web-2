@@ -88,4 +88,50 @@
     background-color: #45a049;
   }
   
+  /* Styles CSS pour aligner la section du plan d'intervention */
+
+.intervention-plan-section {
+  margin: 20px auto; /* Centrer horizontalement */
+  padding: 15px;
+  max-width: 600px; /* Ajuster la largeur pour s'aligner avec le reste */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.intervention-plan-section h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  text-align: center; /* Centrer le titre */
+}
+
+.intervention-plan-section textarea {
+  width: 100%;
+  height: 150px; /* Ajuster la hauteur selon les besoins */
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical; /* Permettre la redimension verticale uniquement */
+}
+
+.submit-task-btn {
+  display: block;
+  width: 100%; /* Bouton pleine largeur aligné avec le textarea */
+  padding: 10px 15px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.submit-task-btn:hover {
+  background-color: #0056b3;
+}
+  
   
