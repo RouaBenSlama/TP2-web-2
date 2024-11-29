@@ -13,6 +13,7 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
   const [comments, setComments] = useState('');
   const [commentTracking, setCommentTracking] = useState('');
   const [responsible, setResponsible] = useState('admin');
+  const [status, setStatus] = useState('');
 
   const currentUser = auth.currentUser;
 
@@ -25,6 +26,7 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
       setComments(selectedArticle.comments);
       setCommentTracking(selectedArticle.commentTracking);
       setResponsible(selectedArticle.responsible);
+      setStatus(selectedArticle.status);
     } else {
       setTitle('');
       setDescription('');
@@ -33,6 +35,7 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
       setComments('');
       setCommentTracking('');
       setResponsible('admin');
+      setStatus('à faire');
     }
   }, [selectedArticle]);
 
@@ -60,6 +63,7 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
       comments,
       commentTracking,
       responsible,
+      status,
       createdAt: serverTimestamp(),
       submittedBy: currentUser ? currentUser.displayName : 'Unknown User',
       dateSubmitted: serverTimestamp(),
@@ -79,6 +83,7 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
     setComments('');
     setCommentTracking('');
     setResponsible('admin');
+    setStatus('à faire');
     setSelectedArticle(null);
   };
 
@@ -117,6 +122,16 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
           value={comments}
           onChange={(e) => setComments(e.target.value)}
         />
+        <select value={status} onChange={(e) => setStatus(e.target.value)} required>
+          <option value="" disabled>
+            Sélectionnez un statut
+          </option>
+          {TASK_STATUSES.map((statusOption) => (
+            <option key={statusOption} value={statusOption}>
+              {statusOption}
+            </option>
+          ))}
+        </select>
         <textarea
           placeholder="Suivi des commentaires (visible une fois assigné)"
           value={commentTracking}
@@ -129,4 +144,5 @@ function CreateArticle({ selectedArticle, setSelectedArticle }) {
   );
 }
 
+export const TASK_STATUSES = ['À faire', 'En cours', 'Terminée', 'Suspendue'];
 export default CreateArticle;

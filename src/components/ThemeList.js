@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import '../styles/ThemeList.css';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaCircle, FaSpinner, FaPauseCircle } from 'react-icons/fa';
+
+
+const statusIcons = {
+  'à faire': { icon: <FaCircle style={{ color: 'gray' }} />, nextStatus: 'en cours' },
+  'en cours': { icon: <FaSpinner style={{ color: 'blue' }} />, nextStatus: 'terminée' },
+  'terminée': { icon: <FaCheckCircle style={{ color: 'green' }} />, nextStatus: 'suspendue' },
+  'suspendue': { icon: <FaPauseCircle style={{ color: 'orange' }} />, nextStatus: 'à faire' },
+};
 
 function ThemeList({ setSelectedArticleId, setSelectedArticle }) {
   const [themes, setThemes] = useState([]);
@@ -49,17 +57,23 @@ function ThemeList({ setSelectedArticleId, setSelectedArticle }) {
     }
   };
 
-  const handleMarkAsComplete = async (articleId) => {
+  const handleStatusChange = async (articleId, currentStatus) => {
+    const nextStatus = statusIcons[currentStatus]?.nextStatus;
+  
+    if (!nextStatus) {
+      console.error("Next status not found for current status:", currentStatus);
+      return;
+    }
+  
     try {
       const articleRef = doc(db, 'tasks', articleId);
-      await updateDoc(articleRef, {
-        status: 'terminée',
-        completedAt: serverTimestamp(),
-      });
+      await updateDoc(articleRef, { status: nextStatus });
+      alert(`Statut mis à jour vers : ${nextStatus}`);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'état de la tâche", error);
+      console.error("Erreur lors de la mise à jour du statut", error);
     }
   };
+  
 
   const handleReassignResponsable = async (articleId, newResponsableId) => {
     try {
@@ -89,30 +103,34 @@ function ThemeList({ setSelectedArticleId, setSelectedArticle }) {
       </div>
       <div className="article-list">
         <h2>Sélectionner une tâche</h2>
-        {articles.map((article) => (
-          <div 
-            key={article.id} 
-            className="article-item" 
-            onClick={() => handleArticleClick(article.id)}
-          >
-            <h3>{article.title}</h3>
-            <p>{article.description}</p>
+          {articles.map((article) => (
+            <div 
+              key={article.id} 
+              className="article-item" 
+              onClick={() => handleArticleClick(article.id)}
+            >
+              <h3>{article.title}</h3>
 
-            {article.status !== 'terminée' && (
-              <FaCheckCircle 
-                onClick={(e) => { e.stopPropagation(); handleMarkAsComplete(article.id); }} 
-                className="complete-icon" 
-              />
-            )}
+              {/* Status Icon */}
+              <div 
+                className="status-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleStatusChange(article.id, article.status);
+                }}
+              >
+                {statusIcons[article.status]?.icon}
+              </div>
 
-            <div className="buttons-container">
-              <button onClick={(e) => { e.stopPropagation(); handleEdit(article); }} className="edit-button">Modifier</button>
-              <button onClick={(e) => { e.stopPropagation(); handleDelete(article.id); }} className="delete-button">Supprimer</button>
-              <button onClick={(e) => { e.stopPropagation(); handleReassignResponsable(article.id, 'newResponsableId'); }} className="reassign-button">
-                Réassigner Responsable
-              </button>
-            </div>
+              <p>{article.description}</p>
 
+              <div className="buttons-container">
+                <button onClick={(e) => { e.stopPropagation(); handleEdit(article); }} className="edit-button">Modifier</button>
+                <button onClick={(e) => { e.stopPropagation(); handleDelete(article.id); }} className="delete-button">Supprimer</button>
+                <button onClick={(e) => { e.stopPropagation(); handleReassignResponsable(article.id, 'newResponsableId'); }} className="reassign-button">
+                  Réassigner Responsable
+                </button>
+              </div>
             <div className="task-meta">
               <p className="task-info">Date de soumission : {article.createdAt ? new Date(article.createdAt.seconds * 1000).toLocaleDateString() : 'Date inconnue'}</p>
               <p className="task-info">Utilisateur : {article.submittedBy}</p>
