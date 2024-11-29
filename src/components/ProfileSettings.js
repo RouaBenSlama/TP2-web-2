@@ -116,7 +116,7 @@ const generateInterventionPlan = async (taskDetails) => {
     return;
   }
     const openai = new OpenAI({
-      apiKey: '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',
+      apiKey: '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',
       dangerouslyAllowBrowser: true,
     });
 
