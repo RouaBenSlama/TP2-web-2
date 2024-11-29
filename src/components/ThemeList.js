@@ -6,6 +6,9 @@ import '../styles/ThemeList.css';
 import { FaCheckCircle, FaCircle, FaSpinner, FaPauseCircle } from 'react-icons/fa';
 import emailjs from 'emailjs-com';
 
+const currentUser = auth.currentUser;
+const userEmail = currentUser?.email;
+
 
 const statusIcons = {
   'à faire': { icon: <FaCircle style={{ color: 'gray' }} />, nextStatus: 'en cours' },
@@ -73,14 +76,6 @@ function ThemeList({ setSelectedArticleId, setSelectedArticle }) {
   
       alert(`Statut mis à jour vers : ${nextStatus}`);
   
-      // Get the current user's email
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        console.error('No user is currently signed in.');
-        return;
-      }
-  
-      const userEmail = currentUser.email;
   
       // Send email using EmailJS
       emailjs
@@ -107,13 +102,33 @@ function ThemeList({ setSelectedArticleId, setSelectedArticle }) {
   };
   
 
-  const handleReassignResponsable = async (articleId, newResponsableId) => {
+  const handleReassignResponsable = async (articleId, newResponsableEmail) => {
     try {
       const articleRef = doc(db, 'tasks', articleId);
       await updateDoc(articleRef, {
-        responsableId: newResponsableId,
+        responsibleEmail: newResponsableEmail,
       });
+
       alert('Responsable mis à jour avec succès.');
+
+      // Envoi d'une notification par email pour la réassignation
+      emailjs
+        .send(
+          'service_8n05oit',
+          'template_358tc6y', // Template pour la réassignation de tâches
+          {
+            to_email: newResponsableEmail
+          },
+          'JurOjVRsPBl1RIKyH'
+        )
+        .then(
+          () => {
+            alert(`Un email a été envoyé au nouvel utilisateur responsable (${newResponsableEmail}).`);
+          },
+          (error) => {
+            console.error("Erreur lors de l'envoi de l'email :", error);
+          }
+        );
     } catch (error) {
       console.error("Erreur lors de la réassignation du responsable", error);
     }
