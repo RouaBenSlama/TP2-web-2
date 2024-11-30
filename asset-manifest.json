@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/RouaBenSlama/TP2-web-2/static/css/main.e64a6b95.css",
-    "main.js": "/RouaBenSlama/TP2-web-2/static/js/main.a2b149ba.js",
-    "static/media/backgroung.gif": "/RouaBenSlama/TP2-web-2/static/media/backgroung.ae14a0f511ead6e42399.gif",
-    "static/media/discussion_theme.jpg": "/RouaBenSlama/TP2-web-2/static/media/discussion_theme.ce630db5641f7674b2f0.jpg",
-    "index.html": "/RouaBenSlama/TP2-web-2/index.html",
-    "main.e64a6b95.css.map": "/RouaBenSlama/TP2-web-2/static/css/main.e64a6b95.css.map",
-    "main.a2b149ba.js.map": "/RouaBenSlama/TP2-web-2/static/js/main.a2b149ba.js.map"
+    "main.css": "/TP2-web-2/static/css/main.480dff93.css",
+    "main.js": "/TP2-web-2/static/js/main.b3c038d0.js",
+    "static/media/backgroung.gif": "/TP2-web-2/static/media/backgroung.ae14a0f511ead6e42399.gif",
+    "static/media/discussion_theme.jpg": "/TP2-web-2/static/media/discussion_theme.ce630db5641f7674b2f0.jpg",
+    "index.html": "/TP2-web-2/index.html",
+    "main.480dff93.css.map": "/TP2-web-2/static/css/main.480dff93.css.map",
+    "main.b3c038d0.js.map": "/TP2-web-2/static/js/main.b3c038d0.js.map"
   },
   "entrypoints": [
-    "static/css/main.e64a6b95.css",
-    "static/js/main.a2b149ba.js"
+    "static/css/main.480dff93.css",
+    "static/js/main.b3c038d0.js"
   ]
 }
